@@ -12,28 +12,9 @@ It also writes a consolidated `news/calendar.json` file that is updated hourly v
 - Stores data in three tiers: last run, monthly canonical, and timestamped history
 - Rule-based alerts: match events by currency, impact, keywords, exact name, or weekday
 - Fires alerts N minutes before each matched event
-- Runs unattended via Docker Compose with built-in scheduling
 - Optional Streamlit UI for browsing data and editing rules live
 
 ## Quickstart
-
-**Docker (recommended)**
-
-```bash
-cp .env.example .env
-# add connector secrets to .env, enable connectors in config.yaml
-./scripts/refresh_docker.sh refresh
-```
-
-That builds the image, starts the scraper scheduler and the alert checker, and prints their status. Common management commands:
-
-```bash
-./scripts/refresh_docker.sh restart   # restart without rebuilding
-./scripts/refresh_docker.sh down      # stop and remove containers
-./scripts/refresh_docker.sh status    # show running containers
-docker compose logs -f alerts         # tail alert logs
-docker compose logs -f scraper        # tail scraper logs
-```
 
 **Local**
 
