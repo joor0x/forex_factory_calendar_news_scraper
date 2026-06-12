@@ -111,10 +111,10 @@ class RuntimeTests(unittest.TestCase):
                             "  check_interval_minutes: 5",
                             "  schedule_preset: every_5_minutes",
                             "  connectors:",
-                            "    - id: discord_main",
-                            "      type: discord",
+                            "    - id: webhook_main",
+                            "      type: webhook",
                             "      enabled: true",
-                            "      webhook_url_env: DISCORD_WEBHOOK_URL",
+                            "      url_env: ALERT_WEBHOOK_URL",
                         ]
                     ),
                     encoding="utf-8",
@@ -129,7 +129,7 @@ class RuntimeTests(unittest.TestCase):
 
                 self.assertEqual(options.check_interval_minutes, 5)
                 self.assertEqual(options.schedule_preset, "every_5_minutes")
-                self.assertEqual(options.connectors[0].connector_id, "discord_main")
+                self.assertEqual(options.connectors[0].connector_id, "webhook_main")
         finally:
             os.environ.clear()
             os.environ.update(previous)

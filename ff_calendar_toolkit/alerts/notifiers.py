@@ -29,9 +29,7 @@ class NotifierFactory:
         connector = self.connector_map.get(connector_id)
         if connector is None:
             raise NotificationError(f"Connector '{connector_id}' is not configured or enabled")
-        if connector.connector_type == "discord":
-            self._send_discord(connector, message)
-        elif connector.connector_type == "telegram":
+        if connector.connector_type == "telegram":
             self._send_telegram(connector, message)
         elif connector.connector_type == "webhook":
             url = _required_env(connector.settings.get("url_env"))
@@ -62,9 +60,6 @@ class NotifierFactory:
     def _send_once(
         self, connector: AlertConnector, message: str, rule: AlertRule, event: AlertEvent
     ) -> None:
-        if connector.connector_type == "discord":
-            self._send_discord(connector, message)
-            return
         if connector.connector_type == "telegram":
             self._send_telegram(connector, message)
             return
@@ -73,9 +68,6 @@ class NotifierFactory:
             return
         raise NotificationError(f"Unsupported connector type '{connector.connector_type}'")
 
-    def _send_discord(self, connector: AlertConnector, message: str) -> None:
-        webhook_url = _required_env(connector.settings.get("webhook_url_env"))
-        _post_json(webhook_url, {"content": message})
 
     def _send_telegram(self, connector: AlertConnector, message: str) -> None:
         bot_token = _required_env(connector.settings.get("bot_token_env"))
@@ -132,7 +124,7 @@ def _post_json(url: str, payload: dict, headers: dict | None = None) -> None:
     body = json.dumps(payload).encode("utf-8")
     request_headers = {
         "Content-Type": "application/json",
-        "User-Agent": "DiscordBot (https://github.com/fizahkhalid/forex_factory_calendar_news_scraper, 1.0)",
+        "User-Agent": "ForexFactoryScraperBot (https://github.com/fizahkhalid/forex_factory_calendar_news_scraper, 1.0)",
     }
     if headers:
         request_headers.update(headers)

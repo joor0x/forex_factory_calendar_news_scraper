@@ -13,6 +13,7 @@ class ScrapeService:
         scraper = ForexFactoryScraper(self.console, headless=options.headless)
         store = FileOutputStore(options.output_dir)
         total_records = 0
+        all_records = []
         store.begin_run(options.output_format)
 
         for month in options.months:
@@ -34,6 +35,7 @@ class ScrapeService:
                 f"Writing {len(records)} filtered rows as {options.output_format} output"
             )
             total_records += len(records)
+            all_records.extend(records)
             result = store.write(records, context, options.output_format)
             self.console.success(
                 f"{context.month_name} {context.year}: {len(records)} rows written "
@@ -41,6 +43,12 @@ class ScrapeService:
             )
             self.console.step(
                 f"Last-run artifacts: {', '.join(str(path) for path in result.last_run_paths)}"
+            )
+
+        if all_records:
+            combined_paths = store.write_combined(all_records, options.output_format)
+            self.console.success(
+                f"Combined output written to: {', '.join(str(path) for path in combined_paths)}"
             )
 
         self.console.success(f"Run finished with {total_records} rows across {len(options.months)} month(s)")

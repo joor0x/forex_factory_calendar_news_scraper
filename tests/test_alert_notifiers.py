@@ -26,12 +26,6 @@ class AlertNotifierTests(unittest.TestCase):
             message_prefix="Forex Alert",
             connectors=[
                 AlertConnector(
-                    connector_id="discord_main",
-                    connector_type="discord",
-                    enabled=True,
-                    settings={"webhook_url_env": "DISCORD_WEBHOOK_URL"},
-                ),
-                AlertConnector(
                     connector_id="telegram_main",
                     connector_type="telegram",
                     enabled=True,
@@ -54,7 +48,7 @@ class AlertNotifierTests(unittest.TestCase):
             enabled=True,
             match={},
             trigger={"minutes_before": 10},
-            deliver=["discord_main"],
+            deliver=["webhook_main"],
             path="rules/usd-cpi.yaml",
         )
         self.event = AlertEvent(

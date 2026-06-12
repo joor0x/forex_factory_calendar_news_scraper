@@ -13,6 +13,10 @@ class OutputStore(ABC):
     def write(self, records: list[dict], context: ScrapeContext, output_format: str) -> WriteResult:
         raise NotImplementedError
 
+    @abstractmethod
+    def write_combined(self, records: list[dict], output_format: str) -> list[Path]:
+        raise NotImplementedError
+
 
 class FileOutputStore(OutputStore):
     def __init__(self, output_dir: Path) -> None:
@@ -57,6 +61,15 @@ class FileOutputStore(OutputStore):
             monthly_paths=monthly_paths,
             history_paths=history_paths,
         )
+
+    def write_combined(self, records: list[dict], output_format: str) -> list[Path]:
+        formats = ["csv", "json"] if output_format == "both" else [output_format]
+        written_paths = []
+        for file_format in formats:
+            path = self.output_dir / f"calendar.{file_format}"
+            self._write_file(path, file_format, records)
+            written_paths.append(path)
+        return written_paths
 
     def _write_file(self, path: Path, file_format: str, records: list[dict]) -> None:
         if file_format == "csv":

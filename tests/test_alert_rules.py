@@ -16,7 +16,7 @@ class AlertRuleTests(unittest.TestCase):
                     "enabled": True,
                     "match": {"currencies": ["USD"], "impacts": ["red"], "event_keywords": ["CPI"]},
                     "trigger": {"minutes_before": 10},
-                    "deliver": ["discord_main"],
+                    "deliver": ["webhook_main"],
                 },
                 "usd-cpi.yaml",
             )

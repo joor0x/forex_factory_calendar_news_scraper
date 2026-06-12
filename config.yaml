@@ -26,11 +26,6 @@ alerts:
   retry_backoff_seconds: 1
   message_prefix: "Forex Factory Alert"
   connectors:
-    - id: discord_main
-      type: discord
-      enabled: true
-      webhook_url_env: DISCORD_WEBHOOK_URL
-
     - id: telegram_main
       type: telegram
       enabled: false

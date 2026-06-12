@@ -34,7 +34,7 @@ class AlertMatchingTests(unittest.TestCase):
                 "weekdays": ["Wed"],
             },
             trigger={"minutes_before": 10},
-            deliver=["discord_main"],
+            deliver=["webhook_main"],
             path="rules/usd-cpi.yaml",
         )
 

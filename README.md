@@ -1,6 +1,8 @@
 # Forex Factory Calendar Scraper & Alert System
 
-Python scraper for the [Forex Factory](https://www.forexfactory.com/calendar) economic calendar. Pulls monthly events into structured CSV/JSON, filters by currency and impact, converts timezones, and fires configurable pre-event alerts to Discord, Telegram, or any HTTP webhook.
+Python scraper for the [Forex Factory](https://www.forexfactory.com/calendar) economic calendar. Pulls monthly events into structured CSV/JSON, filters by currency and impact, converts timezones, and fires configurable pre-event alerts to Telegram or any HTTP webhook.
+
+It also writes a consolidated `news/calendar.json` file that is updated hourly via GitHub Actions and can be consumed via a simple raw web request.
 
 ## Features
 
@@ -10,7 +12,6 @@ Python scraper for the [Forex Factory](https://www.forexfactory.com/calendar) ec
 - Stores data in three tiers: last run, monthly canonical, and timestamped history
 - Rule-based alerts: match events by currency, impact, keywords, exact name, or weekday
 - Fires alerts N minutes before each matched event
-- Delivers to Discord webhooks, Telegram bots, or any HTTPS endpoint
 - Runs unattended via Docker Compose with built-in scheduling
 - Optional Streamlit UI for browsing data and editing rules live
 
@@ -41,6 +42,19 @@ docker compose logs -f scraper        # tail scraper logs
 cp .env.example .env
 ./scripts/run.sh scrape
 ```
+
+**GitHub Actions (Hourly Scraper)**
+
+This project can run automatically every hour using GitHub Actions, committing and pushing the updated data back to your repository.
+
+1. Push this project to your GitHub repository.
+2. The workflow file at `.github/workflows/scrape.yml` is configured to run every hour (`0 * * * *`) and on manual triggers (`workflow_dispatch`).
+3. It generates and updates a consolidated JSON file containing all scraped events: `news/calendar.json`.
+4. You can consume this data directly from any web client or raw request using GitHub's raw URL:
+   ```
+   https://raw.githubusercontent.com/<your-username>/<your-repo>/main/news/calendar.json
+   ```
+5. **Important**: You must give GitHub Actions write permissions to push updates. Go to your repository **Settings** -> **Actions** -> **General** -> **Workflow permissions**, select **Read and write permissions**, and click **Save**.
 
 ## Commands
 
@@ -175,7 +189,7 @@ match:
 trigger:
   minutes_before: 10
 deliver:
-  - discord_main
+  - telegram_main
 ```
 
 **Match fields** (all optional, combined with AND logic):
@@ -196,38 +210,6 @@ Multiple rules can target the same connector. State is tracked so an alert fires
 
 Enable connectors in `config.yaml` under `alerts.connectors`, then add secrets to `.env`.
 
-**Discord**
-
-A webhook is a special URL that lets this script post messages directly to a channel. No bot account or coding required.
-
-How to create one:
-
-1. Open Discord and go to the channel where you want alerts (e.g. `#forex-alerts`)
-2. Click the gear icon next to the channel name to open **Edit Channel**
-3. In the left menu click **Integrations**
-4. Click **Create Webhook** (or **New Webhook** if one already exists)
-5. Give it a name like `Forex Factory Alerts` and optionally upload an avatar
-6. Click **Copy Webhook URL** — this is the URL you need
-7. Paste it into your `.env` as shown below
-
-Keep the webhook URL private — anyone with it can post to your channel.
-
-```yaml
-- id: discord_main
-  type: discord
-  enabled: true
-  webhook_url_env: DISCORD_WEBHOOK_URL
-```
-
-```env
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1234567890/xxxx
-```
-
-Verify it works by running:
-
-```bash
-python -m ff_calendar_toolkit.cli test-notify
-```
 
 **Telegram**
 
@@ -270,7 +252,6 @@ python -m ff_calendar_toolkit.cli test-notify
 It sends a real test message through every enabled connector and prints the result:
 
 ```
-ok    discord_main
 ok    telegram_main
 fail  webhook_main: Missing required secret environment variable 'ALERT_WEBHOOK_URL'
 ```

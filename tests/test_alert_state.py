@@ -11,21 +11,21 @@ class AlertStateTests(unittest.TestCase):
             store = AlertStateStore(Path(temp_dir))
             state = store.load()
 
-            store.mark_failure(state, "key1", "discord_main", "boom")
-            self.assertIn("key1|discord_main", state["failures"])
+            store.mark_failure(state, "key1", "webhook_main", "boom")
+            self.assertIn("key1|webhook_main", state["failures"])
 
             store.mark_sent(
                 state,
                 "key1",
-                "discord_main",
+                "webhook_main",
                 {"rule": "usd-cpi", "event": "Core CPI"},
             )
-            self.assertTrue(store.is_sent(state, "key1", "discord_main"))
-            self.assertNotIn("key1|discord_main", state["failures"])
+            self.assertTrue(store.is_sent(state, "key1", "webhook_main"))
+            self.assertNotIn("key1|webhook_main", state["failures"])
 
             store.save(state)
             reloaded = store.load()
-            self.assertTrue(store.is_sent(reloaded, "key1", "discord_main"))
+            self.assertTrue(store.is_sent(reloaded, "key1", "webhook_main"))
 
 
 if __name__ == "__main__":

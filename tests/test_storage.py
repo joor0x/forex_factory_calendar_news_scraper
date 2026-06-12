@@ -54,6 +54,14 @@ class StorageTests(unittest.TestCase):
             self.assertEqual(payload[0]["event"], "NFP")
             self.assertEqual(payload[0]["timezone"], "Asia/Karachi")
 
+            # test write_combined
+            combined_result = store.write_combined(records, "both")
+            self.assertEqual(len(combined_result), 2)
+            self.assertTrue((tmp_path / "calendar.csv").exists())
+            self.assertTrue((tmp_path / "calendar.json").exists())
+            payload_combined = json.loads((tmp_path / "calendar.json").read_text(encoding="utf-8"))
+            self.assertEqual(payload_combined[0]["event"], "NFP")
+
 
 if __name__ == "__main__":
     unittest.main()
