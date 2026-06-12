@@ -37,7 +37,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
           # Stage the news directory containing outputs (specifically calendar.json and last_run)
-          git add news/
+          git add -f news/
           
           # Only commit and push if there are changes
           if ! git diff-index --quiet HEAD --; then
