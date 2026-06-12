@@ -124,7 +124,7 @@ def _post_json(url: str, payload: dict, headers: dict | None = None) -> None:
     body = json.dumps(payload).encode("utf-8")
     request_headers = {
         "Content-Type": "application/json",
-        "User-Agent": "ForexFactoryScraperBot (https://github.com/fizahkhalid/forex_factory_calendar_news_scraper, 1.0)",
+        "User-Agent": "ForexFactoryScraperBot (https://github.com/joor0x/forex-factory-agent-feed, 1.0)",
     }
     if headers:
         request_headers.update(headers)

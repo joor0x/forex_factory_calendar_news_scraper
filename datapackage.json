@@ -1,0 +1,52 @@
+{
+  "name": "forex-factory-economic-calendar",
+  "title": "Forex Factory Economic Calendar (hourly snapshot)",
+  "description": "Consolidated Forex Factory economic-calendar events, refreshed hourly by GitHub Actions. The JSON resource is canonical; the CSV mirrors the same rows.",
+  "homepage": "https://github.com/joor0x/forex-factory-agent-feed",
+  "licenses": [
+    { "name": "MIT", "path": "https://opensource.org/licenses/MIT", "title": "MIT License" }
+  ],
+  "version": "2.0.0",
+  "schema_version": 2,
+  "sources": [
+    { "title": "Forex Factory Calendar", "path": "https://www.forexfactory.com/calendar" }
+  ],
+  "resources": [
+    {
+      "name": "calendar-json",
+      "path": "news/calendar.json",
+      "format": "json",
+      "mediatype": "application/json",
+      "description": "Canonical array of event objects. Validate against calendar.schema.json.",
+      "profile": "data-resource"
+    },
+    {
+      "name": "calendar-csv",
+      "path": "news/calendar.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "description": "Flat CSV mirror of calendar.json. Confirm the emitted path (output_format: both).",
+      "profile": "tabular-data-resource",
+      "dialect": { "delimiter": ",", "header": true },
+      "schema": {
+        "fields": [
+          { "name": "time", "type": "string", "description": "HH:MM (24h) in `timezone`, or case-insensitive 'All Day' or 'Tentative'." },
+          { "name": "timezone", "type": "string", "description": "IANA tz name for time/date." },
+          { "name": "currency", "type": "string", "description": "Currency code (USD, EUR, GBP, CAD, ...)." },
+          { "name": "impact", "type": "string", "constraints": { "enum": ["red", "orange", "yellow", "gray"] }, "description": "Colour: red=high, orange=medium, yellow=low, gray=holiday." },
+          { "name": "impact_level", "type": "string", "constraints": { "enum": ["high", "medium", "low", "holiday"] }, "description": "Semantic impact: high, medium, low, holiday." },
+          { "name": "event", "type": "string" },
+          { "name": "detail", "type": "string", "format": "uri" },
+          { "name": "actual", "type": "string", "description": "As printed; empty when unreleased." },
+          { "name": "forecast", "type": "string", "description": "As printed; empty when absent." },
+          { "name": "previous", "type": "string", "description": "As printed; empty when absent." },
+          { "name": "day", "type": "string", "constraints": { "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] } },
+          { "name": "date", "type": "date", "format": "%d/%m/%Y", "description": "Event date, dd/mm/yyyy." },
+          { "name": "datetime_utc", "type": "datetime", "description": "ISO-8601 UTC event timestamp. Empty for non-timed events." },
+          { "name": "scraped_at", "type": "datetime", "description": "ISO-8601 UTC scrape timestamp." }
+        ],
+        "missingValues": [""]
+      }
+    }
+  ]
+}

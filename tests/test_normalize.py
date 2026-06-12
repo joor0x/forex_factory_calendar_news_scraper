@@ -32,7 +32,16 @@ class NormalizeTests(unittest.TestCase):
         self.assertEqual(normalized[0]["date"], "02/09/2025")
         self.assertEqual(normalized[0]["day"], "Tue")
         self.assertEqual(normalized[0]["time"], "08:00")
+        self.assertEqual(normalized[0]["datetime_utc"], "2025-09-02T03:00:00Z")
+        self.assertEqual(normalized[0]["impact_level"], "high")
+        self.assertEqual(normalized[0]["forecast"], "2")
+        self.assertEqual(normalized[0]["previous"], "3")
+
         self.assertEqual(normalized[1]["time"], "08:00")
+        self.assertEqual(normalized[1]["datetime_utc"], "2025-09-02T03:00:00Z")
+        self.assertEqual(normalized[1]["impact_level"], "medium")
+        self.assertEqual(normalized[1]["forecast"], None)
+        self.assertEqual(normalized[1]["previous"], None)
 
     def test_convert_time_zone_handles_special_values(self):
         self.assertEqual(

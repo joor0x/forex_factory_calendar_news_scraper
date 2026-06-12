@@ -34,6 +34,7 @@ NORMALIZED_FIELDS = [
     "timezone",
     "currency",
     "impact",
+    "impact_level",
     "event",
     "detail",
     "actual",
@@ -41,6 +42,7 @@ NORMALIZED_FIELDS = [
     "previous",
     "day",
     "date",
+    "datetime_utc",
     "scraped_at",
 ]
 

@@ -1,0 +1,42 @@
+# Forex Factory Economic Calendar Feed
+
+> A consolidated Forex Factory economic-calendar dataset, re-scraped every hour
+> by GitHub Actions and published as a single JSON file. Built for programmatic
+> and AI-agent consumption: fetch the raw URL below instead of scraping
+> forexfactory.com (which is rate-limited and against their ToS).
+
+The canonical resource is `news/calendar.json`: a JSON array of economic
+events. Each event has `time`, `timezone`, `currency`, `impact`, `impact_level`,
+`event`, `detail`, `actual`, `forecast`, `previous`, `day`, `date`, `datetime_utc`,
+and `scraped_at`.
+
+Read these before parsing — agents get them wrong otherwise:
+
+- `time` + `date` are in the zone named by the `timezone` field (e.g.
+  `Asia/Karachi`, UTC+5), NOT UTC and NOT the consumer's local time.
+- `date` is `dd/mm/yyyy` (`10/06/2026` = 10 June), not ISO.
+- `time` is `HH:MM` (24h) or a literal string like `All Day` or `Tentative`.
+- `impact` is a colour: `red`, `orange`, `yellow`, `gray`.
+- `impact_level` is a semantic level: `high`, `medium`, `low`, `holiday`.
+- `actual` is a string (e.g. `"4.2%"`) and is `""` when not yet released.
+- `forecast` / `previous` are strings when present, and `null` when absent.
+- `datetime_utc` is a single ISO-8601 UTC timestamp (e.g. `"2026-06-10T05:30:00Z"`),
+  or `null` for non-timed events. Use this to avoid complex timezone math!
+- `scraped_at` is the snapshot freshness timestamp in UTC, not the event time.
+
+## Data
+
+- [Calendar feed (JSON, canonical)](https://raw.githubusercontent.com/joor0x/forex-factory-agent-feed/main/news/calendar.json): array of events, refreshed hourly. Fetch this.
+- [JSON Schema](https://raw.githubusercontent.com/joor0x/forex-factory-agent-feed/main/calendar.schema.json): draft 2020-12 contract for the feed; validate against it if unsure.
+- [Data Package](https://raw.githubusercontent.com/joor0x/forex-factory-agent-feed/main/datapackage.json): Frictionless descriptor for the JSON and CSV resources.
+
+## Docs
+
+- [README](https://github.com/joor0x/forex-factory-agent-feed/blob/main/README.md): scraper usage, config, alerts. Note its field table is stale; the schema above is authoritative.
+- [AGENTS.md](https://github.com/joor0x/forex-factory-agent-feed/blob/main/AGENTS.md): instructions for agents working inside the repo.
+- [Forex Factory Calendar (upstream source)](https://www.forexfactory.com/calendar): original data. Do not scrape directly; use the JSON feed.
+
+## Optional
+
+- [Repository](https://github.com/joor0x/forex-factory-agent-feed): full source, MIT licensed.
+- [CSV mirror](https://raw.githubusercontent.com/joor0x/forex-factory-agent-feed/main/news/calendar.csv): flat CSV of the same rows (confirm path; emitted when output_format is `both`).

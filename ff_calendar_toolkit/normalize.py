@@ -7,6 +7,33 @@ import pytz
 
 from .config import NORMALIZED_FIELDS
 
+IMPACT_LEVEL_MAP = {
+    "red": "high",
+    "orange": "medium",
+    "yellow": "low",
+    "gray": "holiday",
+}
+
+
+def calculate_datetime_utc(
+    date_str: str,
+    time_str: str,
+    source_timezone: str | None,
+) -> str | None:
+    if not time_str or not date_str or not source_timezone:
+        return None
+
+    if time_str.lower() in ["all day", "tentative"]:
+        return None
+
+    try:
+        from_zone = pytz.timezone(source_timezone)
+        naive_dt = datetime.strptime(f"{date_str} {time_str.strip()}", "%d/%m/%Y %I:%M%p")
+        localized_dt = from_zone.localize(naive_dt)
+        return localized_dt.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except Exception:
+        return None
+
 
 def read_json(path: str | Path):
     with open(path, "r", encoding="utf-8") as handle:
@@ -103,15 +130,38 @@ def normalize_rows(
         new_row["event"] = row.get("event", "")
         new_row["detail"] = row.get("detail", "")
         new_row["actual"] = row.get("actual", "")
-        new_row["forecast"] = row.get("forecast", "")
-        new_row["previous"] = row.get("previous", "")
         new_row["scraped_at"] = scraped_at or ""
+
+        # forecast and previous vacíos to None
+        forecast_val = row.get("forecast", "")
+        if forecast_val == "empty" or forecast_val == "":
+            new_row["forecast"] = None
+        else:
+            new_row["forecast"] = forecast_val
+
+        previous_val = row.get("previous", "")
+        if previous_val == "empty" or previous_val == "":
+            new_row["previous"] = None
+        else:
+            new_row["previous"] = previous_val
+
+        # impact_level
+        impact_level = None
+        impact_val = row.get("impact", "")
+        if impact_val and impact_val != "empty":
+            impact_level = IMPACT_LEVEL_MAP.get(impact_val.lower().strip())
+        new_row["impact_level"] = impact_level
+
+        # datetime_utc using current_time in source_timezone
+        new_row["datetime_utc"] = calculate_datetime_utc(
+            current_date, current_time, source_timezone
+        )
 
         for key, value in list(new_row.items()):
             if value == "empty":
                 new_row[key] = ""
 
         if filter_row(new_row, allowed_currencies, allowed_impacts):
-            structured_rows.append({field: new_row.get(field, "") for field in NORMALIZED_FIELDS})
+            structured_rows.append({field: new_row.get(field) for field in NORMALIZED_FIELDS})
 
     return structured_rows

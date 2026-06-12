@@ -81,9 +81,15 @@ class FileOutputStore(OutputStore):
         with open(path, "w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=NORMALIZED_FIELDS)
             writer.writeheader()
-            writer.writerows([{field: row.get(field, "") for field in NORMALIZED_FIELDS} for row in records])
+            writer.writerows([
+                {field: ("" if row.get(field) is None else row.get(field)) for field in NORMALIZED_FIELDS}
+                for row in records
+            ])
 
     def _write_json(self, path: Path, records: list[dict]) -> None:
-        payload = [{field: row.get(field, "") for field in NORMALIZED_FIELDS} for row in records]
+        payload = [
+            {field: (None if row.get(field) is None else row.get(field)) for field in NORMALIZED_FIELDS}
+            for row in records
+        ]
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(payload, handle, indent=2)

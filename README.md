@@ -54,16 +54,22 @@ python -m ff_calendar_toolkit.cli view             # open the Streamlit UI
 
 Each event row contains:
 
-| Field | Example |
-|---|---|
-| `currency` | `USD` |
-| `impact` | `red` |
-| `date` | `2025-01-15` |
-| `time` | `13:30` |
-| `event` | `Core CPI m/m` |
-| `detail` | `https://www.forexfactory.com/...` |
-| `timezone` | `Asia/Karachi` |
-| `scraped_at` | `2025-01-14T08:00:00` |
+| Field | Type | Description |
+|---|---|---|
+| `time` | `string` | HH:MM (24h) in `timezone`, or "All Day" / "Tentative". |
+| `timezone` | `string` | IANA timezone name. |
+| `currency` | `string` | ISO currency code (USD, EUR, GBP, CAD, etc.). |
+| `impact` | `string` | Forex Factory impact color (red, orange, yellow, gray). |
+| `impact_level` | `string \| null` | Semantic impact level ("high", "medium", "low", "holiday"). |
+| `event` | `string` | Event name. |
+| `detail` | `string` | Deep link to Forex Factory detail page. |
+| `actual` | `string` | Actual released value, empty string `""` if not yet released. |
+| `forecast` | `string \| null` | Consensus forecast, `null` if absent. |
+| `previous` | `string \| null` | Previous period value, `null` if absent. |
+| `day` | `string` | Three-letter weekday. |
+| `date` | `string` | Event date in `dd/mm/yyyy` format. |
+| `datetime_utc` | `string \| null` | ISO-8601 UTC timestamp of the event. `null` for non-timed events. |
+| `scraped_at` | `string` | ISO-8601 UTC scrape timestamp. |
 
 ### Filtering
 

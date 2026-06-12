@@ -27,6 +27,7 @@ class StorageTests(unittest.TestCase):
                     "timezone": "Asia/Karachi",
                     "currency": "USD",
                     "impact": "red",
+                    "impact_level": "high",
                     "event": "NFP",
                     "detail": "url",
                     "actual": "1",
@@ -34,6 +35,7 @@ class StorageTests(unittest.TestCase):
                     "previous": "3",
                     "day": "Tue",
                     "date": "02/04/2026",
+                    "datetime_utc": "2026-04-02T03:00:00Z",
                     "scraped_at": "2026-04-19T00:00:00+00:00",
                 }
             ]
